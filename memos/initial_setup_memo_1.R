@@ -1,5 +1,5 @@
 # INITIAL SETUP PROGRESS MEMO 1 ----
-# this file contains 
+# this file contains data quality checks, a little data cleaning, and exploration of the target variable
 
 # load packages
 library(tidyverse)

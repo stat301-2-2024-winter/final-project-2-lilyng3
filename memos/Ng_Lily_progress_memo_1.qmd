@@ -94,4 +94,4 @@ The counts on the three different enrollment statuses (dropout, enrolled, gradua
 
 ## Misc
 
-Considering the data is mostly communicated with integers, I would appreciate some insight as to whether I should transform it all into factors, or leave them as integers and then interpret from there. My current plan is to convert the variables with only a few options to character variables, and then keep the other character variables that have 100+ values as integers. I will likely not use the ones with too many variables as predictors.
+Considering the data is mostly communicated with integers, I will change some of the data into corresponding factors, but I will also leave some of them as integers and then interpret from there if there are too many levels. My current plan is to convert the variables with only a few options to character variables, and then keep the other character variables that have 100+ values as integers. I will likely not use the ones with too many variables as predictors, as they have too wide of a range.
