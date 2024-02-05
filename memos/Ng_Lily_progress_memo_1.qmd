@@ -3,7 +3,7 @@ title: "Progress Memo 1"
 subtitle: |
   | Final Project 
   | Data Science 2 with R (STAT 301-2)
-author: "YOUR NAME"
+author: "Lily Ng"
 date: today
 
 format:
@@ -20,47 +20,78 @@ reference-location: margin
 citation-location: margin
 ---
 
-::: {.callout-important}
-## Memo format
-
-Like all other submissions for this course, we expect the memo to be neat and well organized. This a template to get you started. 
-
-You should make this document your own. To help with this we have added a date to the yaml above (good whenever writing memos). You should remove this block when making this document your own.
-
-:::
-
-::: {.callout-tip icon=false}
-
+::: {.callout-tip icon="false"}
 ## Github Repo Link
 
-To link to your github **repo**sitory, appropriately edit the example link below. Meaning replace `https://your-github-repo-url` with your github repo url. Suggest verifying the link works before submitting.
-
-[https://your-github-repo-url](https://your-github-repo-url)
-
+[Final Project 2 GitHub Repo](https://github.com/stat301-2-2024-winter/final-project-2-lilyng3.git)
 :::
 
-::: {.callout-warning}
-GitHub (free account) cannot store large files. If you try to commit and push a large dataset you will have an ERROR! Any file over 100 MB (100,000 KB) needs to be added to the `.gitignore` file BEFORE committing.
+```{r}
+#| echo: false
+# load packages
+library(tidyverse)
+library(tidymodels)
+library(readxl)
+library(here)
+library(naniar)
 
-**We may need to do that for files in your final project!**
-:::
+# load data
+students_raw <- read_csv(here("data/dataset.csv")) |> 
+  janitor::clean_names()
+```
+
+## Prediction Problem
+
+My final project will research what factors affect students either dropping out or attainment of an educational degree. The variable I will be focusing on is the student’s enrollment status (dropped out, or enrolled/graduated), therefore this problem is a classification problem. Having a prediction model to predict factors that influence students dropping out or staying in school is relevant as educational institutions prioritize retaining students. Additionally, it is important for students to achieve a degree if possible as holding a degree correlates with more privilege in life. This is particularly interesting to me as I study education, and I thought the pieces of data they collected from each student, such as information on their parents, if they have a scholarship, and if they are displaces, among other things, are particularly interesting potential predictors to study.
 
 ## Data source
 
-Blah blah blah^[an example of footnote --- [content in margins](https://quarto.org/docs/blog/posts/2022-02-17-advanced-layout/)]
+My data source is from the [UCI Machine Learning Repository](#0), which provides high quality and well used datasets for machine learning purposes. This dataset explores the enrollment status of students in higher education, and provides information about them such as their area of study, demographic and background information, and their academic performance.
 
-## Why this data
+I have also cited the paper, *Early Prediction of student’s Performance in Higher Education: A Case Study,* as it was requested to do alongside the usage of the data.
 
-Blah blah blah^[another footnote]
+**Dataset:**
 
-## Data quality & complexity check
+Valentim Realinho, M. V. M. (2021). Predict students’ dropout and academic success \[dataset\]. UCI Machine Learning Repository. https://doi.org/10.24432/C5MC89 
 
-Blah blah blah
+**Paper:**
 
-## Potential data issues
+Martins, M. V., Tolledo, D., Machado, J., Baptista, L. M. T., & Realinho, V. (2021). Early Prediction of student’s Performance in Higher Education: A Case Study. In Á. Rocha, H. Adeli, G. Dzemyda, F. Moreira, & A. M. Ramalho Correia (Eds.), Trends and Applications in Information Systems and Technologies (Vol. 1365, pp. 166–175). Springer International Publishing. https://doi.org/10.1007/978-3-030-72657-7_16
 
-Blah blah blah
+## Data quality check
+
+```{r}
+#| echo: false
+students <- students_raw |> 
+  mutate(
+    target = factor(target),
+  )
+
+# proof of data being read in by checking for missingness
+vis_miss(students)
+```
+
+There are 35 variables and 4,424 observations. While all the data in raw form are in numbers, upon further analysis, there are 19 numeric variables and 18 categorical based on what each variable represents. I will change the data types for some of the variables for progress memo 2. There is no missingness in the dataset, as seen above.
+
+## Target variable analysis
+
+```{r}
+#| echo: false
+
+# target variable analysis
+students |> 
+  ggplot(aes(x = target)) +
+  geom_bar(fill = "darkblue") +
+  theme_minimal() +
+  labs(
+    title = "Distribution of Student Enrollment Status",
+    x = "Status",
+    y = "Count"
+  )
+```
+
+The counts on the three different enrollment statuses (dropout, enrolled, graduated) are uneven. There are around 500 more students who graduated then dropped out, and about 700 more dropped out than are currently enrolled. I believe a potential solution to this is to up-count or down-count the data, as was mentioned in class, although I am unsure what the exact procedure is. Once we learn more about how to create classification models in class I will be better equipped to transform the data.
 
 ## Misc
 
-Blah Blah
+Considering the data is mostly communicated with integers, I would appreciate some insight as to whether I should transform it all into factors, or leave them as integers and then interpret from there. My current plan is to convert the variables with only a few options to character variables, and then keep the other character variables that have 100+ values as integers. I will likely not use the ones with too many variables as predictors.
