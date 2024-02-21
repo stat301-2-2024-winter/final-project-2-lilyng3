@@ -1,4 +1,4 @@
-# INITIAL SETUP PROGRESS MEMO 1 ----
+# INITIAL SETUP ----
 # this file contains data quality checks, a little data cleaning, and exploration of the target variable
 
 # load packages
@@ -20,7 +20,6 @@ students <- students_raw |>
     target = factor(target),
   )
 
-
 # checking for missingness
 vis_miss(students)
 
@@ -34,3 +33,4 @@ students |>
     x = "Status",
     y = "Count"
   )
+

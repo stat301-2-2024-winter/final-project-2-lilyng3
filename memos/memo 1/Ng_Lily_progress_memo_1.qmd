@@ -46,17 +46,17 @@ My final project will research what factors affect students either dropping out 
 
 ## Data source
 
-My data source is from the [UCI Machine Learning Repository](#0), which provides high quality and well used datasets for machine learning purposes. This dataset explores the enrollment status of students in higher education, and provides information about them such as their area of study, demographic and background information, and their academic performance.
+My data source is from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success), which provides high quality and well used datasets for machine learning purposes. This dataset explores the enrollment status of students in higher education, and provides information about them such as their area of study, demographic and background information, and their academic performance.
 
 I have also cited the paper, *Early Prediction of student’s Performance in Higher Education: A Case Study,* as it was requested to do alongside the usage of the data.
 
 **Dataset:**
 
-Valentim Realinho, M. V. M. (2021). Predict students’ dropout and academic success \[dataset\]. UCI Machine Learning Repository. https://doi.org/10.24432/C5MC89 
+Valentim Realinho, M. V. M. (2021). Predict students’ dropout and academic success \[dataset\]. UCI Machine Learning Repository. [https://doi.org/10.24432/C5MC89](https://doi.org/10.24432/C5MC89) 
 
 **Paper:**
 
-Martins, M. V., Tolledo, D., Machado, J., Baptista, L. M. T., & Realinho, V. (2021). Early Prediction of student’s Performance in Higher Education: A Case Study. In Á. Rocha, H. Adeli, G. Dzemyda, F. Moreira, & A. M. Ramalho Correia (Eds.), Trends and Applications in Information Systems and Technologies (Vol. 1365, pp. 166–175). Springer International Publishing. https://doi.org/10.1007/978-3-030-72657-7_16
+Martins, M. V., Tolledo, D., Machado, J., Baptista, L. M. T., & Realinho, V. (2021). Early Prediction of student’s Performance in Higher Education: A Case Study. In Á. Rocha, H. Adeli, G. Dzemyda, F. Moreira, & A. M. Ramalho Correia (Eds.), Trends and Applications in Information Systems and Technologies (Vol. 1365, pp. 166–175). Springer International Publishing. [https://doi.org/10.1007/978-3-030-72657-7_16](https://doi.org/10.1007/978-3-030-72657-7_16)
 
 ## Data quality check
 
