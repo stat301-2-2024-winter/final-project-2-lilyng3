@@ -1,5 +1,5 @@
 # Progress Memo 2 ----
-# Initial data checks, data splitting, & data folding
+# Initial data checks, data splitting, & data folding for the assesment metric of 'target'
 
 # load packages ----
 library(tidyverse)
@@ -36,50 +36,50 @@ students <- students_raw |>
     daytime_evening_attendance = factor(
       daytime_evening_attendance,
       levels = c(0, 1),
-      labels = c("evening", "daytime"),
-      ordered = FALSE
+      labels = c("evening", "daytime")
     ),
     displaced = factor(
       displaced,
       levels = c(0, 1),
-      labels = c("no", "yes"),
-      ordered = FALSE
+      labels = c("no", "yes")
     ),
     educational_special_needs = factor(
       educational_special_needs,
       levels = c(0, 1),
-      labels = c("no", "yes"),
-      ordered = FALSE
+      labels = c("no", "yes")
     ),
     debtor = factor(
       debtor,
       levels = c(0, 1),
-      labels = c("no", "yes"),
-      ordered = FALSE
+      labels = c("no", "yes")
     ),
     tuition_fees_up_to_date = factor(
       tuition_fees_up_to_date,
       levels = c(0, 1),
-      labels = c("no", "yes"),
-      ordered = FALSE
+      labels = c("no", "yes")
     ),
     gender = factor(
       gender,
       levels = c(0, 1),
-      labels = c("female", "male"),
-      ordered = FALSE
+      labels = c("female", "male")
     ),
     scholarship_holder = factor(
       scholarship_holder,
       levels = c(0, 1),
-      labels = c("no", "yes"),
-      ordered = FALSE
+      labels = c("no", "yes")
     ),
     international = factor(
       international,
       levels = c(0, 1),
-      labels = c("no", "yes"),
-      ordered = FALSE
+      labels = c("no", "yes")
     ),
   ) |>
   filter(target != "Enrolled")
+
+students_split <- students |> 
+  initial_split(prop = 0.8, strata = target)
+
+students_train <- students_split |> training()
+students_test <- students_split |> testing()
+
+save(students_train, students_test, file = here("results/students_split.rda"))
