@@ -82,4 +82,10 @@ students_split <- students |>
 students_train <- students_split |> training()
 students_test <- students_split |> testing()
 
-save(students_train, students_test, file = here("results/students_split.rda"))
+students_folds <-
+  vfold_cv(students_train,
+           v = 10,
+           repeats = 5,
+           strata = target)
+
+save(students_train, students_test, students_folds, file = here("memos/memo-2/results/students_split.rda"))
