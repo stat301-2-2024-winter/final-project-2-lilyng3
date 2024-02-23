@@ -1,5 +1,5 @@
-# Progress Memo 2 ----
-# Initial data checks, data splitting, & data folding for the assesment metric of 'target'
+# Progress Memo 2 - initial setup
+# Initial data checks, data splitting, & data folding for the assessment metric of 'target'
 
 # load packages ----
 library(tidyverse)
