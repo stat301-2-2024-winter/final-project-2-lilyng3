@@ -2987,7 +2987,16 @@ vertical-align: -.125em;
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#assessment-metric" id="toc-assessment-metric" class="nav-link active" data-scroll-target="#assessment-metric">Assessment Metric</a></li>
+  <li><a href="#analysis-plan" id="toc-analysis-plan" class="nav-link" data-scroll-target="#analysis-plan">Analysis Plan</a></li>
+  <li><a href="#progress-check" id="toc-progress-check" class="nav-link" data-scroll-target="#progress-check">Progress Check</a></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a></li>
+  </ul>
+</nav>
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -3035,6 +3044,70 @@ Github Repo Link
 <p><a href="https://github.com/stat301-2-2024-winter/final-project-2-lilyng3.git">Final Project 2 GitHub Repo</a></p>
 </div>
 </div>
+<section id="assessment-metric" class="level2">
+<h2 class="anchored" data-anchor-id="assessment-metric">Assessment Metric</h2>
+<p>The assessment metric is whether or not a student dropped out or graduated from school. The original variable in the raw data had three outcomes, which are dropped out, currently enrolled, and graduated. Considering that students who are currently enrolled have the potential to either drop out or graduate, I removed them from the data set. </p>
+</section>
+<section id="analysis-plan" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-plan">Analysis Plan</h2>
+<p>I split my data on an 80-20 split, and used v-fold cross-validation to create folds. For models, will be using a null, logistic, elastic net, k-nearest neighbors, random forest, and boosted tree models. I have already created and fit the null and logistic models, the results are below. I am planning on having four recipes, two kitchen sink and two custom recipes. Each set of two will be one tree-based recipe and one parametric recipe.</p>
+</section>
+<section id="progress-check" class="level2">
+<h2 class="anchored" data-anchor-id="progress-check">Progress Check</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-metric" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table 1: Metrics for Null and Logistic Models</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">model</th>
+<th style="text-align: left;">.metric</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">std_err</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">null</td>
+<td style="text-align: left;">accuracy</td>
+<td style="text-align: right;">0.6086819</td>
+<td style="text-align: right;">0.0000925</td>
+<td style="text-align: right;">50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">null</td>
+<td style="text-align: left;">roc_auc</td>
+<td style="text-align: right;">0.5000000</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">logistic</td>
+<td style="text-align: left;">accuracy</td>
+<td style="text-align: right;">0.9047234</td>
+<td style="text-align: right;">0.0020250</td>
+<td style="text-align: right;">50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">logistic</td>
+<td style="text-align: left;">roc_auc</td>
+<td style="text-align: right;">0.9500757</td>
+<td style="text-align: right;">0.0018634</td>
+<td style="text-align: right;">50</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>I created, fit, and looked at the metrics for the null and logistic models using a parametric kitchen sink recipe thus far. As seen in <a href="#tbl-metric">Table 1</a>, the null model, while achieving an accuracy of approximately 60.87%, is not able to distinguish between dropout and graduation statuses, which is indicated by its ROC AUC of 0.5. On the other hand, the logistic regression model did much better, with an accuracy of approximately 90.47% and a high ROC AUC of 0.95. These results suggest that the logistic regression model has a much better predictive capacity. However, this does make me think further investigation is needed to make sure that the model’s performance is not a result of overfitting or other issues.</p>
+</section>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next Steps</h2>
+<p>My next steps are to create the other recipes and fit the rest of the models so I can compare metrics. Then, I will be able to fit the best model with the testing data to see if the model is successful in predicting new data. As aforementioned, my current concern is why the logistic regression model performed so well, but I guess I would have to compare the results from the testing data to see if the data is actually overfit.</p>
+</section>
 
 </main>
 <!-- /main column -->

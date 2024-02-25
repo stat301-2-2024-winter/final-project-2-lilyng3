@@ -1,4 +1,4 @@
-# Final Project - Model Analysis
+# Progress Memo 2 - model analysis
 # Analyze model results
 
 # load packages ----
@@ -10,9 +10,9 @@ library(here)
 tidymodels_prefer()
 
 # load data ----
-load(here("results/students_split.rda"))
-load(here("results/null_fit.rda"))
-load(here("results/logistic_fit.rda"))
+load(here("memos/memo-2/results/students_split.rda"))
+load(here("memos/memo-2/results/null_fit.rda"))
+load(here("memos/memo-2/results/logistic_fit.rda"))
 
 # set seed
 set.seed(847)
@@ -30,3 +30,4 @@ logistic_predict
 combined_table <- bind_rows(null_predict, logistic_predict) |> 
   knitr::kable()
 combined_table
+

@@ -37,8 +37,40 @@ library(here)
 # load data
 students_raw <- read_csv(here("data/dataset.csv")) |> 
   janitor::clean_names()
-
-
+load(here("memos/memo-2/results/students_split.rda"))
+load(here("memos/memo-2/results/null_fit.rda"))
+load(here("memos/memo-2/results/logistic_fit.rda"))
 ```
 
+## Assessment Metric
 
+The assessment metric is whether or not a student dropped out or graduated from school. The original variable in the raw data had three outcomes, which are dropped out, currently enrolled, and graduated. Considering that students who are currently enrolled have the potential to either drop out or graduate, I removed them from the data set. 
+
+## Analysis Plan
+
+I split my data on an 80-20 split, and used v-fold cross-validation to create folds. For models, will be using a null, logistic, elastic net, k-nearest neighbors, random forest, and boosted tree models. I have already created and fit the null and logistic models, the results are below. I am planning on having four recipes, two kitchen sink and two custom recipes. Each set of two will be one tree-based recipe and one parametric recipe.
+
+## Progress Check
+
+```{r}
+#| label: tbl-metric
+#| tbl-cap: "Metrics for Null and Logistic Models"
+#| echo: false
+null_predict <- collect_metrics(null_fit) |> 
+  mutate(model = "null") |> 
+  select(model, .metric, mean, std_err, n)
+
+logistic_predict <- collect_metrics(logistic_fit) |> 
+  mutate(model = "logistic") |> 
+  select(model, .metric, mean, std_err, n)
+
+combined_table <- bind_rows(null_predict, logistic_predict) |> 
+  knitr::kable()
+combined_table
+```
+
+I created, fit, and looked at the metrics for the null and logistic models using a parametric kitchen sink recipe thus far. As seen in @tbl-metric, the null model, while achieving an accuracy of approximately 60.87%, is not able to distinguish between dropout and graduation statuses, which is indicated by its ROC AUC of 0.5. On the other hand, the logistic regression model did much better, with an accuracy of approximately 90.47% and a high ROC AUC of 0.95. These results suggest that the logistic regression model has a much better predictive capacity. However, this does make me think further investigation is needed to make sure that the model's performance is not a result of overfitting or other issues.
+
+## Next Steps
+
+My next steps are to create the other recipes and fit the rest of the models so I can compare metrics. Then, I will be able to fit the best model with the testing data to see if the model is successful in predicting new data. As aforementioned, my current concern is why the logistic regression model performed so well, but I guess I would have to compare the results from the testing data to see if the data is actually overfit.
