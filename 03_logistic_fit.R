@@ -1,5 +1,5 @@
-# Progress Memo 2 - logistic model fit
-# Define and fit ordinary logistic model
+# Final Project - Logistic Model
+# Define and fit logistic model
 
 # load packages ----
 library(tidyverse)
@@ -10,8 +10,8 @@ library(here)
 tidymodels_prefer()
 
 # load data ----
-load(here("memos/memo-2/results/students_split.rda"))
-load(here("memos/memo-2/results/students_recipe.rda"))
+load(here("results/students_split.rda"))
+load(here("results/students_recipe.rda"))
 
 # set seed
 set.seed(847)
@@ -35,4 +35,4 @@ logistic_fit <- fit_resamples(
 )
 
 # save out recipes
-save(logistic_fit, file = here("memos/memo-2/results/logistic_fit.rda"))
+save(logistic_fit, file = here("results/logistic_fit.rda"))

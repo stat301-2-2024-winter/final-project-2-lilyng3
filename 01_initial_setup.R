@@ -1,4 +1,4 @@
-# Progress Memo 2 - initial setup
+# Final Project - Initial Setup
 # Initial data checks, data splitting, & data folding for the assessment metric of 'target'
 
 # load packages ----
@@ -88,4 +88,4 @@ students_folds <-
            repeats = 5,
            strata = target)
 
-save(students_train, students_test, students_folds, file = here("memos/memo-2/results/students_split.rda"))
+save(students_train, students_test, students_folds, file = here("results/students_split.rda"))

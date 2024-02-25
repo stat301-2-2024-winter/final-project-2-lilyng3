@@ -1,4 +1,4 @@
-# Progress Memo 2 - recipes
+# Final Project - Recipes
 # Setup pre-processing/recipes
 
 # load packages ----
@@ -26,4 +26,4 @@ prep(students_recipe) |>
   bake(new_data = NULL)
 
 # save out recipes
-save(students_recipe, file = here("memos/memo-2/results/students_recipe.rda"))
+save(students_recipe, file = here("results/students_recipe.rda"))
