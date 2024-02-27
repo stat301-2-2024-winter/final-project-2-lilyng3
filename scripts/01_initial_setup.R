@@ -14,7 +14,7 @@ tidymodels_prefer()
 set.seed(847)
 
 # load data
-students_raw <- read_csv(here("data/dataset.csv")) |> 
+students_raw <- read_csv(here("data/students.csv")) |> 
   janitor::clean_names()
 
 students <- students_raw |>
@@ -88,4 +88,4 @@ students_folds <-
            repeats = 5,
            strata = target)
 
-save(students_train, students_test, students_folds, file = here("results/students_split.rda"))
+save(students_train, students_test, students_folds, file = here("data_splits/students_split.rda"))

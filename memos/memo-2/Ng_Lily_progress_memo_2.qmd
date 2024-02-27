@@ -35,26 +35,130 @@ library(readxl)
 library(here)
 
 # load data
-students_raw <- read_csv(here("data/dataset.csv")) |> 
+students_raw <- read_csv(here("data/students.csv")) |> 
   janitor::clean_names()
+
+students <- students_raw |>
+  filter(target != "Enrolled") |> 
+  mutate(
+    target = factor(target),
+    marital_status = factor(
+      marital_status,
+      levels = c(1, 2, 3, 4, 5, 6),
+      labels = c(
+        "single",
+        "married",
+        "widower",
+        "divorced",
+        "facto union",
+        "legally separated"
+      ),
+      ordered = FALSE
+    ),
+    daytime_evening_attendance = factor(
+      daytime_evening_attendance,
+      levels = c(0, 1),
+      labels = c("evening", "daytime")
+    ),
+    displaced = factor(
+      displaced,
+      levels = c(0, 1),
+      labels = c("no", "yes")
+    ),
+    educational_special_needs = factor(
+      educational_special_needs,
+      levels = c(0, 1),
+      labels = c("no", "yes")
+    ),
+    debtor = factor(
+      debtor,
+      levels = c(0, 1),
+      labels = c("no", "yes")
+    ),
+    tuition_fees_up_to_date = factor(
+      tuition_fees_up_to_date,
+      levels = c(0, 1),
+      labels = c("no", "yes")
+    ),
+    gender = factor(
+      gender,
+      levels = c(0, 1),
+      labels = c("female", "male")
+    ),
+    scholarship_holder = factor(
+      scholarship_holder,
+      levels = c(0, 1),
+      labels = c("no", "yes")
+    ),
+    international = factor(
+      international,
+      levels = c(0, 1),
+      labels = c("no", "yes")
+    ),
+    continent = factor(
+      nacionality,
+      levels = c(1:21),
+      labels = c("Europe", "Europe", "Europe", "Europe", "Europe", "Europe", "Europe", "Africa", "Europe", "Africa", "Africa", "Africa", "Europe", "South America", "Europe", "Europe", "North America", "Europe", "Europe", "North America", "South America")
+    ),
+    application_mode = as.character(application_mode),
+    application_order = factor(
+      application_order,
+      levels = c(1:9),
+      ordered = TRUE
+    ),
+    course = as.character(course),
+    previous_qualification = as.character(previous_qualification)
+  )
+
 load(here("memos/memo-2/results/students_split.rda"))
 load(here("memos/memo-2/results/null_fit.rda"))
 load(here("memos/memo-2/results/logistic_fit.rda"))
 ```
 
-## Assessment Metric
+## Data source
 
-The assessment metric is whether or not a student dropped out or graduated from school. The original variable in the raw data had three outcomes, which are dropped out, currently enrolled, and graduated. Considering that students who are currently enrolled have the potential to either drop out or graduate, I removed them from the data set. 
+My data source is from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success), which provides high quality and well used datasets for machine learning purposes. This dataset explores the enrollment status of students in higher education, and provides information about them such as their area of study, demographic and background information, and their academic performance.
+
+I have also cited the paper, *Early Prediction of student’s Performance in Higher Education: A Case Study,* as it was requested to do alongside the usage of the data.
+
+**Dataset:**
+
+Valentim Realinho, M. V. M. (2021). Predict students’ dropout and academic success \[dataset\]. UCI Machine Learning Repository. <https://doi.org/10.24432/C5MC89> 
+
+**Paper:**
+
+Martins, M. V., Tolledo, D., Machado, J., Baptista, L. M. T., & Realinho, V. (2021). Early Prediction of student’s Performance in Higher Education: A Case Study. In Á. Rocha, H. Adeli, G. Dzemyda, F. Moreira, & A. M. Ramalho Correia (Eds.), Trends and Applications in Information Systems and Technologies (Vol. 1365, pp. 166–175). Springer International Publishing. <https://doi.org/10.1007/978-3-030-72657-7_16>
+
+## Target Variable
+
+```{r}
+#| label: fig-target
+#| fig-cap: "Distribution of Student Enrollment Status"
+#| echo: false
+
+# target variable analysis
+students |> 
+  ggplot(aes(x = target)) +
+  geom_bar(fill = "skyblue") +
+  theme_minimal() +
+  labs(
+    title = "Distribution of Student Enrollment Status",
+    x = "Status",
+    y = "Count"
+  )
+```
+
+The target variable is whether or not a student dropped out or graduated from school. The original variable in the raw data had three outcomes, which are dropped out, currently enrolled, and graduated. Considering that students who are currently enrolled have the potential to either drop out or graduate, I removed them from the data set. @fig-target shows the distribution of the target variable, with status of either Dropout or Graduate.
 
 ## Analysis Plan
 
-I split my data on an 80-20 split, and used v-fold cross-validation to create folds. For models, will be using a null, logistic, elastic net, k-nearest neighbors, random forest, and boosted tree models. I have already created and fit the null and logistic models, the results are below. I am planning on having four recipes, two kitchen sink and two custom recipes. Each set of two will be one tree-based recipe and one parametric recipe.
+I split my data on an 70-30 split, and used v-fold cross-validation to create folds. For models, I will be using null, logistic, elastic net, k-nearest neighbor, random forest, and boosted tree models. I have already created and fit the null and logistic models, the results are shown below. I am planning on having four recipes, two basic recipes using all variables and two feature engineering recipes. Each set of two will be one tree-based recipe and one parametric recipe.
 
-## Progress Check
+## Assessment Metric
 
 ```{r}
 #| label: tbl-metric
-#| tbl-cap: "Metrics for Null and Logistic Models"
+#| tbl-cap: "Accuracy & ROC AUC Metrics for Null and Logistic Models"
 #| echo: false
 null_predict <- collect_metrics(null_fit) |> 
   mutate(model = "null") |> 
@@ -69,8 +173,10 @@ combined_table <- bind_rows(null_predict, logistic_predict) |>
 combined_table
 ```
 
-I created, fit, and looked at the metrics for the null and logistic models using a parametric kitchen sink recipe thus far. As seen in @tbl-metric, the null model, while achieving an accuracy of approximately 60.87%, is not able to distinguish between dropout and graduation statuses, which is indicated by its ROC AUC of 0.5. On the other hand, the logistic regression model did much better, with an accuracy of approximately 90.47% and a high ROC AUC of 0.95. These results suggest that the logistic regression model has a much better predictive capacity. However, this does make me think further investigation is needed to make sure that the model's performance is not a result of overfitting or other issues.
+I looked through my raw data source and converted some variables that were numeric but represented discrete categories into either factors or character based variables. I left discrete variables that were OK as integers, such as age at enrollment, to stay numeric. I then created, fit, and looked at the metrics for the null and logistic models using a basic parametric recipe with all variables thus far. As seen in @tbl-metric, the null model, while achieving an accuracy of approximately 60.87%, is not able to distinguish between dropout and graduation statuses, which is indicated by its ROC AUC of 0.5. On the other hand, the logistic regression model did much better, with an accuracy of approximately 90.51% and a high ROC AUC of 0.94. These results suggest that the logistic regression model has a much better predictive capacity. However, this does make me think further investigation is needed to make sure that the model's performance is not a result of overfitting or other issues.
+
+My primary assessment metric will be the ROC AUC, while considering it within the context of the accuracy value. 
 
 ## Next Steps
 
-My next steps are to create the other recipes and fit the rest of the models so I can compare metrics. Then, I will be able to fit the best model with the testing data to see if the model is successful in predicting new data. As aforementioned, my current concern is why the logistic regression model performed so well, but I guess I would have to compare the results from the testing data to see if the data is actually overfit.
+My next steps are to create the other recipes and fit the rest of the models so I can compare metrics. Then, I will be able to fit the best model with the testing data to see if the model is successful in predicting new data. As aforementioned, my current concern is the logistic regression model performance being fairly high, but I suppose I will have to compare the results from the testing data to see if my results lead to overfitting. Additionally, if the linear regression model is accurate, I am curious to see if any of the other models or recipes will produce a better ROC AUC or accuracy metric as those values are already high.

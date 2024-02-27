@@ -10,8 +10,8 @@ library(here)
 tidymodels_prefer()
 
 # load data ----
-load(here("results/students_split.rda"))
-load(here("results/students_recipe.rda"))
+load(here("data_splits/students_split.rda"))
+load(here("recipes/students_recipe.rda"))
 
 # set seed
 set.seed(847)
