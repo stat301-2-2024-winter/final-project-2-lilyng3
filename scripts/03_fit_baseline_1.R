@@ -1,4 +1,4 @@
-# Final Project - Null Model
+# Final Project - Null Model: Recipe 1
 # Define and fit ordinary null model
 
 # load packages ----

@@ -1,4 +1,4 @@
-# Final Project - Logistic Model
+# Final Project - Logistic Model: Recipe 1
 # Define and fit logistic model
 
 # load packages ----

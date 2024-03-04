@@ -1,5 +1,5 @@
-# Final Project - Boosted Tree Model: Recipe 1
-# Define and tune boosted tree model
+# Final Project - Random Forest Model: Recipe 1
+# Define and tune random forest model
 
 # load packages ----
 library(tidyverse)
@@ -21,33 +21,33 @@ load(here("recipes/students_recipe.rda"))
 set.seed(847)
 
 # model specification ----
-bt_model <- boost_tree(
+rf_model <- rand_forest(
   mode = "classification",
-  mtry = tune(),
+  trees = 1000,
   min_n = tune(),
-  learn_rate = tune()
+  mtry = tune()
 ) |>
-  set_engine("xgboost")
+  set_engine("ranger")
 
-# define workflow ----
-bt_workflow <- workflow() |>
-  add_model (bt_model) |>
+# define workflows ----
+rf_workflow <- workflow() |>
+  add_model(rf_model) |>
   add_recipe(tree_recipe_1)
 
 # hyperparameter tuning values ----
-bt_params <- extract_parameter_set_dials(bt_model) |>
+rf_params <- extract_parameter_set_dials(rf_model) |>
   update(mtry = mtry(range = c(1, 40)),
          min_n = min_n(range = c(2, 40)))
 
-bt_grid <- grid_regular(bt_params, levels = 5)
+rf_grid <- grid_regular(rf_params, levels = 5)
 
 # fit workflows/models ----
-bt_tuned <- tune_grid(
-  bt_workflow,
+rf_tuned <- tune_grid(
+  rf_workflow,
   students_folds,
-  grid = bt_grid,
+  grid = rf_grid,
   control = control_grid(save_workflow = TRUE)
 )
 
 # write out results (fitted/trained workflows) ----
-save(bt_tuned, file = here("results/bt_tuned.rda"))
+save(rf_tuned, file = here("results/rf_tuned.rda"))
