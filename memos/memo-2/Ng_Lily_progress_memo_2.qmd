@@ -110,9 +110,9 @@ students <- students_raw |>
     previous_qualification = as.character(previous_qualification)
   )
 
-load(here("memos/memo-2/results/students_split.rda"))
-load(here("memos/memo-2/results/null_fit.rda"))
-load(here("memos/memo-2/results/logistic_fit.rda"))
+load(here("data_splits/students_split.rda"))
+load(here("results/null_fit.rda"))
+load(here("results/logistic_fit.rda"))
 ```
 
 ## Data source
