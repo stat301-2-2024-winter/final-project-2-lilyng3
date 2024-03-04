@@ -6,6 +6,10 @@ library(tidyverse)
 library(tidymodels)
 library(here)
 
+# parallel processing
+library(doMC)
+registerDoMC(cores = parallel::detectCores(logical = TRUE))
+
 # handle common conflicts
 tidymodels_prefer()
 
@@ -24,7 +28,7 @@ null_model <- null_model() |>
 # define workflow ----
 null_workflow <- workflow() |>
   add_model (null_model) |>
-  add_recipe(students_recipe)
+  add_recipe(main_recipe_1)
 
 # fit workflow/model ----
 null_fit <- fit_resamples(

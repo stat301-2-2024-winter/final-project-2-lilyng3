@@ -74,7 +74,20 @@ students <- students_raw |>
       levels = c(0, 1),
       labels = c("no", "yes")
     ),
-  ) 
+    continent = factor(
+      nacionality,
+      levels = c(1:21),
+      labels = c("Europe", "Europe", "Europe", "Europe", "Europe", "Europe", "Europe", "Africa", "Europe", "Africa", "Africa", "Africa", "Europe", "South America", "Europe", "Europe", "North America", "Europe", "Europe", "North America", "South America")
+    ),
+    application_mode = as.character(application_mode),
+    application_order = factor(
+      application_order,
+      levels = c(1:9),
+      ordered = TRUE
+    ),
+    course = as.character(course),
+    previous_qualification = as.character(previous_qualification)
+  )
 
 students_split <- students |> 
   initial_split(prop = 0.8, strata = target)

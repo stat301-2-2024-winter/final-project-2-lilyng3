@@ -1,10 +1,14 @@
-# Final Project - Logistic Model
-# Define and fit logistic model
+# Final Project - Null Model
+# Define and fit ordinary null model
 
 # load packages ----
 library(tidyverse)
 library(tidymodels)
 library(here)
+
+# parallel processing
+library(doMC)
+registerDoMC(cores = parallel::detectCores(logical = TRUE))
 
 # handle common conflicts
 tidymodels_prefer()
@@ -17,22 +21,22 @@ load(here("recipes/students_recipe.rda"))
 set.seed(847)
 
 # model specification ----
-logistic_model <- logistic_reg() |>
-  set_engine("glm") |>
+null_model <- null_model() |>
+  set_engine("parsnip") |>
   set_mode("classification")
 
 # define workflow ----
-logistic_workflow <- workflow() |>
-  add_model(logistic_model) |>
-  add_recipe(students_recipe)
+null_workflow <- workflow() |>
+  add_model (null_model) |>
+  add_recipe(main_recipe_1)
 
 # fit workflow/model ----
-logistic_fit <- fit_resamples(
-  logistic_workflow,
+null_fit <- fit_resamples(
+  null_workflow,
   resamples = students_folds,
   control = control_resamples(save_workflow = TRUE,
                               parallel_over = "everything")
 )
 
 # save out recipes
-save(logistic_fit, file = here("results/logistic_fit.rda"))
+save(null_fit, file = here("results/null_fit.rda"))
