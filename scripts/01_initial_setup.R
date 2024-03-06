@@ -89,6 +89,9 @@ students <- students_raw |>
     previous_qualification = as.character(previous_qualification)
   )
 
+save(students, file = here("data/students_clean.rda"))
+
+
 students_split <- students |> 
   initial_split(prop = 0.8, strata = target)
 
