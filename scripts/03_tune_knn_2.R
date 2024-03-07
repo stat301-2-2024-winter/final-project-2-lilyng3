@@ -28,7 +28,7 @@ knn_model <-
 # define workflows ----
 knn_workflow <- workflow() |>
   add_model(knn_model) |>
-  add_recipe(main_recipe_1)
+  add_recipe(main_recipe_2)
 
 # hyperparameter tuning values ----
 knn_params <- extract_parameter_set_dials(knn_model)
@@ -36,7 +36,7 @@ knn_params <- extract_parameter_set_dials(knn_model)
 knn_grid <- grid_regular(knn_params, levels = 5)
 
 # fit workflows/models ----
-knn_tuned <- tune_grid(
+knn_tuned_2 <- tune_grid(
   knn_workflow,
   students_folds,
   grid = knn_grid,
@@ -44,4 +44,4 @@ knn_tuned <- tune_grid(
 )
 
 # write out results (fitted/trained workflows) ----
-save(knn_tuned, file = here("results/knn_tuned.rda"))
+save(knn_tuned_2, file = here("results/knn_tuned_2.rda"))
