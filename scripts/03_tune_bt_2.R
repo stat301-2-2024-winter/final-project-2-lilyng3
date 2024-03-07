@@ -28,7 +28,7 @@ bt_model <- boost_tree(
 # define workflow ----
 bt_workflow <- workflow() |>
   add_model (bt_model) |>
-  add_recipe(tree_recipe_1)
+  add_recipe(tree_recipe_2)
 
 # hyperparameter tuning values ----
 bt_params <- extract_parameter_set_dials(bt_model) |> 
@@ -38,10 +38,10 @@ bt_params <- extract_parameter_set_dials(bt_model) |>
 bt_grid <- grid_regular(bt_params, levels = 5)
 
 # fit workflows/models ----
-bt_tuned <- tune_grid(bt_workflow,
+bt_tuned_2 <- tune_grid(bt_workflow,
                       students_folds,
                       grid = bt_grid,
                       control = control_grid(save_workflow = TRUE))
 
 # write out results (fitted/trained workflows) ----
-save(bt_tuned, file = here("results/bt_tuned.rda"))
+save(bt_tuned_2, file = here("results/bt_tuned_2.rda"))

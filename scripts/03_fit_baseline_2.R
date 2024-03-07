@@ -28,10 +28,10 @@ null_model <- null_model() |>
 # define workflow ----
 null_workflow <- workflow() |>
   add_model (null_model) |>
-  add_recipe(main_recipe_1)
+  add_recipe(main_recipe_2)
 
 # fit workflow/model ----
-null_fit <- fit_resamples(
+null_fit_2 <- fit_resamples(
   null_workflow,
   resamples = students_folds,
   control = control_resamples(save_workflow = TRUE,
@@ -39,4 +39,4 @@ null_fit <- fit_resamples(
 )
 
 # save out recipes
-save(null_fit, file = here("results/null_fit.rda"))
+save(null_fit_2, file = here("results/null_fit_2.rda"))

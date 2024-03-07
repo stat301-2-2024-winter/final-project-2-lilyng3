@@ -30,7 +30,7 @@ en_model <-
 # define workflows ----
 en_workflow <- workflow() |>
   add_model(en_model) |>
-  add_recipe(main_recipe_1)
+  add_recipe(main_recipe_2)
 
 # hyperparameter tuning values ----
 en_params <- extract_parameter_set_dials(en_model)
@@ -38,7 +38,7 @@ en_params <- extract_parameter_set_dials(en_model)
 en_grid <- grid_regular(en_params, levels = 5)
 
 # fit workflows/models ----
-en_tuned <- tune_grid(
+en_tuned_2 <- tune_grid(
   en_workflow,
   students_folds,
   grid = en_grid,
@@ -46,4 +46,4 @@ en_tuned <- tune_grid(
 )
 
 # write out results (fitted/trained workflows) ----
-save(en_tuned, file = here("results/en_tuned.rda"))
+save(en_tuned_2, file = here("results/en_tuned_2.rda"))

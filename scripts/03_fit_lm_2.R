@@ -28,10 +28,10 @@ logistic_model <- logistic_reg() |>
 # define workflow ----
 logistic_workflow <- workflow() |>
   add_model(logistic_model) |>
-  add_recipe(main_recipe_1)
+  add_recipe(main_recipe_2)
 
 # fit workflow/model ----
-logistic_fit <- fit_resamples(
+logistic_fit_2 <- fit_resamples(
   logistic_workflow,
   resamples = students_folds,
   control = control_resamples(save_workflow = TRUE,
@@ -39,4 +39,4 @@ logistic_fit <- fit_resamples(
 )
 
 # save out recipes
-save(logistic_fit, file = here("results/logistic_fit.rda"))
+save(logistic_fit_2, file = here("results/logistic_fit_2.rda"))

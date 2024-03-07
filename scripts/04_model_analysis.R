@@ -11,13 +11,24 @@ tidymodels_prefer()
 
 # load data ----
 load(here("data_splits/students_split.rda"))
+
 load(here("results/null_fit.rda"))
+load(here("results/null_fit_2.rda"))
+
 load(here("results/logistic_fit.rda"))
+load(here("results/logistic_fit_2.rda"))
 
 load(here("results/bt_tuned.rda"))
+load(here("results/bt_tuned_2.rda"))
+
 load(here("results/en_tuned.rda"))
+load(here("results/en_tuned_2.rda"))
+
 load(here("results/knn_tuned.rda"))
+load(here("results/knn_tuned_2.rda"))
+
 load(here("results/rf_tuned.rda"))
+load(here("results/rf_tuned_2.rda"))
 
 # set seed
 set.seed(847)
@@ -25,50 +36,84 @@ set.seed(847)
 null_predict <- collect_metrics(null_fit) |> 
   mutate(model = "null") |> 
   select(model, .metric, mean, std_err, n)
-null_predict
 
 logistic_predict <- collect_metrics(logistic_fit) |> 
   mutate(model = "logistic") |> 
   select(model, .metric, mean, std_err, n)
-logistic_predict
 
 tbl_null <- null_fit |> 
-  show_best("accuracy") |> 
+  show_best("roc_auc") |> 
   slice_max(mean) |> 
   select(mean, n, std_err) |> 
   mutate(model = "Null Fit")
 
+tbl_null_2 <- null_fit_2 |> 
+  show_best("roc_auc") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Null Fit 2")
+
 tbl_lm <- logistic_fit |> 
-  show_best("accuracy") |> 
+  show_best("roc_auc") |> 
   slice_max(mean) |> 
   select(mean, n, std_err) |> 
   mutate(model = "Linear")
 
+tbl_lm_2 <- logistic_fit_2 |> 
+  show_best("roc_auc") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Linear 2")
+
 tbl_en <- en_tuned |> 
-  show_best("accuracy") |> 
+  show_best("roc_auc") |> 
   slice_max(mean) |> 
   select(mean, n, std_err) |> 
   mutate(model = "Elastic Net")
 
+tbl_en_2 <- en_tuned_2 |> 
+  show_best("roc_auc") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Elastic Net 2")
+
 tbl_rf <- rf_tuned |> 
-  show_best("accuracy") |> 
+  show_best("roc_auc") |> 
   slice_max(mean) |> 
   select(mean, n, std_err) |> 
   mutate(model = "Random Forest")
 
+tbl_rf_2 <- rf_tuned_2 |> 
+  show_best("roc_auc") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Random Forest 2")
+
 tbl_bt <- bt_tuned |> 
-  show_best("accuracy") |> 
+  show_best("roc_auc") |> 
   slice_max(mean) |> 
   select(mean, n, std_err) |> 
   mutate(model = "Boosted Tree")
 
+tbl_bt_2 <- bt_tuned_2 |> 
+  show_best("roc_auc") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Boosted Tree 2")
+
 tbl_knn <- knn_tuned |> 
-  show_best("accuracy") |> 
+  show_best("roc_auc") |> 
   slice_max(mean) |> 
   select(mean, n, std_err) |> 
   mutate(model = "K-nearest Neighbor")
 
-result_table <- bind_rows(tbl_lm, tbl_bt, tbl_en, tbl_knn, tbl_null, tbl_rf) |> 
+tbl_knn_2 <- knn_tuned_2 |> 
+  show_best("roc_auc") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "K-nearest Neighbor 2")
+
+result_table <- bind_rows(tbl_lm, tbl_bt, tbl_en, tbl_knn, tbl_null, tbl_rf, tbl_knn_2, tbl_lm_2, tbl_bt_2, tbl_en_2, tbl_null_2, tbl_rf_2) |> 
   select(model, mean, std_err, n) |> 
   arrange(mean)
 result_table
