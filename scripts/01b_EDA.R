@@ -20,7 +20,7 @@ set.seed(847)
 eda_students_split <- students_train |> 
   initial_split(prop = 0.8, strata = target)
 
-eda_eda_students_train <- eda_students_split |> training()
+eda_students_train <- eda_students_split |> training()
 eda_students_test <- eda_students_split |> testing()
 
 
@@ -149,9 +149,8 @@ eda_students_train |>
 eda_students_train |> 
   ggplot(aes(x = marital_status, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() # target by application_mode
 
-# target by application_mode
 eda_students_train |> 
   ggplot(aes(x = application_mode, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
