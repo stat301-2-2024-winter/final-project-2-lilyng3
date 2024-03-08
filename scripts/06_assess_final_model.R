@@ -25,9 +25,9 @@ students_predict <- students_test |>
   bind_cols(predict(final_fit, students_test))
 
 accuracy_final <- accuracy(students_predict, truth = target, estimate = .pred_class)
+accuracy_final
 
 save(accuracy_final, file = here("results/accuracy_final.rda"))
-accuracy_final
 
 conf_matrix <- conf_mat(students_predict, truth = target, estimate = .pred_class) 
 conf_matrix
