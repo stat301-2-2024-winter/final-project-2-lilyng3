@@ -33,14 +33,7 @@ load(here("results/rf_tuned_2.rda"))
 # set seed
 set.seed(847)
 
-null_predict <- collect_metrics(null_fit) |> 
-  mutate(model = "null") |> 
-  select(model, .metric, mean, std_err, n)
-
-logistic_predict <- collect_metrics(logistic_fit) |> 
-  mutate(model = "logistic") |> 
-  select(model, .metric, mean, std_err, n)
-
+# ROC AUC METRICS
 tbl_null <- null_fit |> 
   show_best("roc_auc") |> 
   slice_max(mean) |> 
@@ -113,12 +106,87 @@ tbl_knn_2 <- knn_tuned_2 |>
   select(mean, n, std_err) |> 
   mutate(model = "K-nearest Neighbor 2")
 
-result_table <- bind_rows(tbl_lm, tbl_bt, tbl_en, tbl_knn, tbl_null, tbl_rf, tbl_knn_2, tbl_lm_2, tbl_bt_2, tbl_en_2, tbl_null_2, tbl_rf_2) |> 
+result_table_roc_auc <- bind_rows(tbl_lm, tbl_bt, tbl_en, tbl_knn, tbl_null, tbl_rf, tbl_knn_2, tbl_lm_2, tbl_bt_2, tbl_en_2, tbl_null_2, tbl_rf_2) |> 
   select(model, mean, std_err, n) |> 
   arrange(mean)
-result_table
+result_table_roc_auc
 
-# combined_table <- bind_rows(null_predict, logistic_predict) |> 
-#   knitr::kable()
-# combined_table
+# ACCURACY METRICS
+tbl_null_accuracy <- null_fit |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Null Fit")
 
+tbl_null_2_accuracy <- null_fit_2 |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Null Fit 2")
+
+tbl_lm_accuracy <- logistic_fit |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Linear")
+
+tbl_lm_2_accuracy <- logistic_fit_2 |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Linear 2")
+
+tbl_en_accuracy <- en_tuned |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Elastic Net")
+
+tbl_en_2_accuracy <- en_tuned_2 |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Elastic Net 2")
+
+tbl_rf_accuracy <- rf_tuned |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Random Forest")
+
+tbl_rf_2_accuracy <- rf_tuned_2 |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Random Forest 2")
+
+tbl_bt_accuracy <- bt_tuned |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Boosted Tree")
+
+tbl_bt_2_accuracy <- bt_tuned_2 |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "Boosted Tree 2")
+
+tbl_knn_accuracy <- knn_tuned |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "K-nearest Neighbor")
+
+tbl_knn_2_accuracy <- knn_tuned_2 |> 
+  show_best("accuracy") |> 
+  slice_max(mean) |> 
+  select(mean, n, std_err) |> 
+  mutate(model = "K-nearest Neighbor 2")
+
+result_table_accuracy <- bind_rows(tbl_lm_accuracy, tbl_bt_accuracy, tbl_en_accuracy, tbl_knn_accuracy, tbl_null_accuracy, tbl_rf_accuracy, tbl_knn_2_accuracy, tbl_lm_2_accuracy, tbl_bt_2_accuracy, tbl_en_2_accuracy, tbl_null_2_accuracy, tbl_rf_2_accuracy) |> 
+  select(model, mean, std_err, n) |> 
+  arrange(mean)
+result_table_accuracy
+
+save(result_table_roc_auc, result_table_accuracy, file = here("results/metrics.rda"))

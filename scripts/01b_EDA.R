@@ -23,9 +23,8 @@ eda_students_split <- students_train |>
 eda_students_train <- eda_students_split |> training()
 eda_students_test <- eda_students_split |> testing()
 
-
 # eda on target variable
-eda_eda_students_train |> 
+eda_students_train |> 
   ggplot(aes(x = target)) +
   geom_bar(fill = "pink2",color = "black") +
   theme_minimal()

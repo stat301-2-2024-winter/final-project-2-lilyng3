@@ -32,8 +32,9 @@ bt_workflow <- workflow() |>
 
 # hyperparameter tuning values ----
 bt_params <- extract_parameter_set_dials(bt_model) |> 
-  update(mtry = mtry(range = c(1, 101)),
-         learn_rate = learn_rate(range = c(0, 1)))
+  update(mtry = mtry(range = c(1, 40)),
+         min_n = min_n(range = c(2, 40)),
+         learn_rate = learn_rate(range = c(-5, -0.2)))
 
 bt_grid <- grid_regular(bt_params, levels = 5)
 

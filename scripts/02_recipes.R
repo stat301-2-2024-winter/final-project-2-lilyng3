@@ -57,14 +57,14 @@ prep(tree_recipe_1) |>
 #   step_interact(terms = ~ curricular_units_1st_sem_credited * curricular_units_2nd_sem_credited)
 
 main_recipe_2 <- recipe(target ~ curricular_units_1st_sem_grade + curricular_units_1st_sem_approved + curricular_units_2nd_sem_grade + curricular_units_2nd_sem_approved + marital_status + application_mode + course + daytime_evening_attendance + previous_qualification + debtor + tuition_fees_up_to_date + gender + scholarship_holder + age_at_enrollment + curricular_units_1st_sem_enrolled + curricular_units_2nd_sem_enrolled + curricular_units_1st_sem_credited + curricular_units_2nd_sem_credited, data = students_train) |>
-  step_dummy(all_nominal_predictors())|>
+  step_dummy(all_nominal_predictors()) |>
+  step_interact(terms = ~ curricular_units_1st_sem_approved * curricular_units_2nd_sem_grade) |>
+  step_interact(terms = ~ curricular_units_1st_sem_enrolled * curricular_units_2nd_sem_enrolled) |>
+  step_interact(terms = ~ curricular_units_1st_sem_credited * curricular_units_2nd_sem_credited) |> 
   step_zv(all_predictors()) |>
   step_normalize(all_predictors()) |>
-  step_corr(all_predictors()) |> 
-  step_interact(terms = ~ curricular_units_1st_sem_approved:starts_with("curricular_units_2nd_sem_grade")) |>
-  step_interact(terms = ~ curricular_units_1st_sem_enrolled:starts_with("curricular_units_2nd_sem_enrolled")) |>
-  step_interact(terms = ~ curricular_units_1st_sem_credited:starts_with("curricular_units_2nd_sem_credited"))
-
+  step_corr(all_predictors())
+  
 # step_pca()?
 # step_other() categorical non binary
 

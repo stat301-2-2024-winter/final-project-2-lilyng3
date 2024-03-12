@@ -92,7 +92,7 @@ students <- students_raw |>
 save(students, file = here("data/students_clean.rda"))
 
 
-students_split <- students |> 
+students_split <- students |>
   initial_split(prop = 0.8, strata = target)
 
 students_train <- students_split |> training()
