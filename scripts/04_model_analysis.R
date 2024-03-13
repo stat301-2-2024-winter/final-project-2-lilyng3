@@ -190,3 +190,15 @@ result_table_accuracy <- bind_rows(tbl_lm_accuracy, tbl_bt_accuracy, tbl_en_accu
 result_table_accuracy
 
 save(result_table_roc_auc, result_table_accuracy, file = here("results/metrics.rda"))
+
+# CHECKING BEST METRICS VIA AUTOPLOT
+bt_autoplot <- autoplot(bt_tuned, metric = "accuracy")
+bt_autoplot
+en_autoplot <- autoplot(en_tuned, metric = "accuracy")
+en_autoplot
+knn_autoplot <- autoplot(knn_tuned, metric = "accuracy")
+knn_autoplot
+rf_autoplot <- autoplot(rf_tuned, metric = "accuracy")
+rf_autoplot
+
+save(bt_autoplot, en_autoplot, knn_autoplot, rf_autoplot, file = here("results/autoplots.rda"))

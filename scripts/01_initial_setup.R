@@ -17,6 +17,7 @@ set.seed(847)
 students_raw <- read_csv(here("data/students.csv")) |> 
   janitor::clean_names()
 
+# clean data --------------------------------------------------------------
 students <- students_raw |>
   filter(target != "Enrolled") |> 
   mutate(
@@ -91,7 +92,11 @@ students <- students_raw |>
 
 save(students, file = here("data/students_clean.rda"))
 
+# explore target variable --------------------------------------------------------------
+students |> 
+  
 
+# split data and create folds --------------------------------------------------------------
 students_split <- students |>
   initial_split(prop = 0.8, strata = target)
 
