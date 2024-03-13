@@ -35,6 +35,7 @@ library(here)
 # load data
 load(here("data/students_clean.rda"))
 load(here("results/eda_plots.rda"))
+load(here("results/metrics.rda"))
 
 
 ```
@@ -69,6 +70,23 @@ students |>
 #| fig-cap: Correlation Plot of Numeric Data
 
 cor_plot
+```
+
+## Model Building & Selection
+```{r}
+#| label: tbl-accuracy
+#| tbl-cap: Best Accuracy of All Models
+
+result_table_accuracy |> 
+  knitr::kable() 
+```
+
+```{r}
+#| label: tbl-rocauc
+#| tbl-cap: Best ROC AUC of All Models
+
+result_table_roc_auc |> 
+  knitr::kable()
 ```
 
 ## Appendix: EDA 
