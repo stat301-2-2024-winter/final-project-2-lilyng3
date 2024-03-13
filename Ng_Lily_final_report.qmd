@@ -27,13 +27,15 @@ citation-location: margin
 :::
 
 ```{r}
-#| echo: false
 # load packages
 library(tidyverse)
 library(tidymodels)
 library(here)
 
 # load data
+load(here("data/students_clean.rda"))
+load(here("results/eda_plots.rda"))
+
 
 ```
 
@@ -43,3 +45,120 @@ TEXT HERE!!!!!!!!!!!!!!!!
 
 ## Data Overview
 
+```{r}
+#| label: fig-target
+#| fig-cap: Distribution of Educational Outcome
+
+students |> 
+  ggplot(aes(x = target, fill = target)) +
+  geom_bar() +
+  scale_fill_brewer(palette = "Paired") +  
+  theme_minimal() +
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) +
+  labs(
+    title = "Distribution of Educational Outcome",
+    x = "Educational Outcome",
+    y = "Count (# of Students)",
+    fill = "Educational Outcome"
+  )
+
+```
+
+```{r}
+#| label: fig-cor
+#| fig-cap: Correlation Plot of Numeric Data
+
+cor_plot
+```
+
+## Appendix: EDA 
+```{r}
+#| label: fig-credited
+#| fig-cap: Units Credited 1st & 2nd Semester
+
+interact_credited_plot
+```
+
+```{r}
+#| label: fig-enrolled
+#| fig-cap: Units Enrolled In For 1st & 2nd Semester
+
+interact_enrolled_plot
+```
+
+```{r}
+#| label: fig-age
+#| fig-cap: Age At Enrollment By Educational Outcome
+
+age_plot
+```
+
+```{r}
+#| label: fig-scholarship
+#| fig-cap: Scholarship Holder By Educational Outcome
+
+scholarship_plot
+```
+
+```{r}
+#| label: fig-gender-dist
+#| fig-cap: Distribution of Gender
+
+gender_dist_plot
+```
+
+```{r}
+#| label: fig-gender
+#| fig-cap: Gender By Educational Outcome
+
+gender_plot
+```
+
+```{r}
+#| label: fig-tuition
+#| fig-cap: Tuition Fees Up To Date By Educational Outcome
+
+tuition_fees_plot
+```
+
+```{r}
+#| label: fig-debt
+#| fig-cap: Debtor Status By Educational Outcome
+
+debt_plot
+```
+
+```{r}
+#| label: fig-qual
+#| fig-cap: Previous Qualifications By Educational Outcome
+
+qual_plot
+```
+
+```{r}
+#| label: fig-time
+#| fig-cap: Attendence Time of Day By Educational Outcome
+
+time_plot
+```
+
+```{r}
+#| label: fig-course
+#| fig-cap: Course By Educational Outcome
+
+course_plot
+```
+
+```{r}
+#| label: fig-app-mode
+#| fig-cap: Application Mode By Educational Outcome
+
+app_mode_plot
+```
+
+```{r}
+#| label: fig-married
+#| fig-cap: Maritial Status By Educational Outcome
+
+married_plot
+```

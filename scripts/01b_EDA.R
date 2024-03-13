@@ -5,6 +5,7 @@
 library(tidyverse)
 library(tidymodels)
 library(here)
+library(RColorBrewer)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -33,7 +34,15 @@ eda_students_train |>
 cor_matrix <- eda_students_train |> 
   select(where(is.numeric)) |> 
   cor()
-ggcorrplot::ggcorrplot(cor_matrix)
+
+colnames(cor_matrix) <- gsub("_", " ", colnames(cor_matrix))
+rownames(cor_matrix) <- gsub("_", " ", rownames(cor_matrix))
+
+cor_plot <- ggcorrplot::ggcorrplot(cor_matrix) +
+  theme(axis.text.x = element_text(size = 8), 
+        axis.text.y = element_text(size = 8)) +
+  labs(title = "Correlation Matrix Between Numeric Variables")
+
 
 # findings:
 
@@ -48,23 +57,35 @@ eda_students_train |>
 # curricular_units_2nd_sem_grade + curricular_units_1st_sem_approved
 eda_students_train |> 
   ggplot(aes(x = curricular_units_1st_sem_approved, y = curricular_units_2nd_sem_grade)) +
-  geom_jitter(width = 0.1, height = 0.1) +
+  geom_point() +
   theme_minimal()
 # use model1 <- lm(), model2 <- lm()
 # anova()
 # would be ok to use corr plot evidence and then investigate variables based on intuition
 
 # curricular_units_2nd_sem_enrolled + curricular_units_1st_sem_enrolled
-eda_students_train |> 
+interact_enrolled_plot <- eda_students_train |> 
   ggplot(aes(x = curricular_units_1st_sem_enrolled, y = curricular_units_2nd_sem_enrolled)) +
-  geom_jitter(width = 0.1, height = 0.1) +
-  theme_minimal()
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(
+      title = "Units Enrolled In For 1st & 2nd Semester",
+      x = "Curricular Units Enrolled In For 1st Semester",
+      y = "Curricular Units Enrolled In For 2nd Semester"
+    )
 
 # curricular_units_2nd_sem_credited + curricular_units_1st_sem_credited
-eda_students_train |> 
+interact_credited_plot <- eda_students_train |> 
   ggplot(aes(x = curricular_units_1st_sem_credited, y = curricular_units_2nd_sem_credited)) +
-  geom_jitter(width = 0.1, height = 0.1) +
-  theme_minimal()
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(
+    title = "Units Credited 1st & 2nd Semester",
+    x = "Curricular Units Credited For 1st Semester",
+    y = "Curricular Units Credited For 2nd Semester"
+  )
 
 # numeric eda w target ----------------------------------------------------
 
@@ -145,15 +166,29 @@ eda_students_train |>
 
 # categorical eda w target ------------------------------------------------
 # target by marital status
-eda_students_train |> 
+married_plot <- eda_students_train |> 
   ggplot(aes(x = marital_status, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal() # target by application_mode
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +  
+  labs(
+    title = "Maritial Status By Educational Outcome",
+    x = "Maritial Status",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
-eda_students_train |> 
+app_mode_plot <- eda_students_train |> 
   ggplot(aes(x = application_mode, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Application Mode By Educational Outcome",
+    x = "Application Mode",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by application_order
 eda_students_train |> 
@@ -162,22 +197,43 @@ eda_students_train |>
   theme_minimal()
 
 # target by course
-eda_students_train |> 
+course_plot <- eda_students_train |> 
   ggplot(aes(x = course, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Course By Educational Outcome",
+    x = "Course",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by daytime_evening_attendance
-eda_students_train |> 
+time_plot <- eda_students_train |> 
   ggplot(aes(x = daytime_evening_attendance, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Attendence Time of Day By Educational Outcome",
+    x = "Time of Day",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by previous_qualification
-eda_students_train |> 
+qual_plot <- eda_students_train |> 
   ggplot(aes(x = previous_qualification, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Previous Qualifications By Educational Outcome",
+    x = "Previous Qualifications",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by displaced
 eda_students_train |> 
@@ -192,40 +248,81 @@ eda_students_train |>
   theme_minimal()
 
 # target by debtor
-eda_students_train |> 
+debt_plot <- eda_students_train |> 
   ggplot(aes(x = debtor, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Debtor Status By Educational Outcome",
+    x = "Debtor Status",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by tuition_fees_up_to_date
-eda_students_train |> 
+tuition_fees_plot <- eda_students_train |> 
   ggplot(aes(x = tuition_fees_up_to_date, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Tuition Fees Up To Date By Educational Outcome",
+    x = "Tuition Fees Up To Date Status",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # distribution of gender
-eda_students_train |> 
+gender_dist_plot <- eda_students_train |> 
   ggplot(aes(gender)) +
-  geom_bar(color = "black", fill = "orchid") +
-  theme_minimal()
+  geom_bar(color = "black", fill = "grey") +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Distribution of Gender",
+    x = "Gender",
+    y = "Number of Students",
+  )
 
 # target by gender
-eda_students_train |> 
+gender_plot <- eda_students_train |> 
   ggplot(aes(x = gender, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Gender By Educational Outcome",
+    x = "Gender",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by scholarship_holder
-eda_students_train |> 
+scholarship_plot <- eda_students_train |> 
   ggplot(aes(x = scholarship_holder, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Scholarship Holder By Educational Outcome",
+    x = "Scholarship Holder Status",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by age_at_enrollment
-eda_students_train |> 
+age_plot <- eda_students_train |> 
   ggplot(aes(x = target, y = age_at_enrollment)) +
   geom_boxplot() +
-  theme_minimal()
+  theme_minimal() +
+  scale_fill_brewer(palette = "Paired") +
+  labs(
+    title = "Age At Enrollment By Educational Outcome",
+    x = "Age At Enrollment",
+    y = "Number of Students",
+    fill = "Educational Outcome"
+  )
 
 # target by international
 eda_students_train |> 
@@ -238,3 +335,6 @@ eda_students_train |>
   ggplot(aes(x = continent, fill = target)) +
   geom_bar(position = "dodge", color = "black") +
   theme_minimal()
+
+
+save(cor_plot, interact_enrolled_plot, interact_credited_plot, age_plot, scholarship_plot, gender_plot, gender_dist_plot, tuition_fees_plot, debt_plot, qual_plot, time_plot, course_plot, app_mode_plot, married_plot, file = here("results/eda_plots.rda"))

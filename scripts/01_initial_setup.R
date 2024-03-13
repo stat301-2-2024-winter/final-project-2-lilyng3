@@ -6,6 +6,7 @@ library(tidyverse)
 library(tidymodels)
 library(here)
 library(readxl)
+library(RColorBrewer)
 
 # handle common conflicts
 tidymodels_prefer()
@@ -94,7 +95,17 @@ save(students, file = here("data/students_clean.rda"))
 
 # explore target variable --------------------------------------------------------------
 students |> 
-  
+  ggplot(aes(x = target, fill = target)) +
+  geom_bar() +
+  scale_fill_brewer(palette = "Paired") +  
+  theme_minimal() +
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) +
+  labs(
+    title = "Distribution of Dropout Status",
+    x = "Educational Outcome",
+    y = "Count (# of Students)",
+    fill = "Educational Outcome"
+  )
 
 # split data and create folds --------------------------------------------------------------
 students_split <- students |>
