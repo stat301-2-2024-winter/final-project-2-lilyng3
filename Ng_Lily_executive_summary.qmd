@@ -79,7 +79,7 @@ In @fig-conf-matrix, we can see the exact breakdown of the positive and negative
 conf_matrix_plot
 ```
 
-Overall, it was fruitful to both build a more complex predictive model and create a feature engineered recipe. The null model had the worst accuracy out of all the models at 0.609, and while the elastic net model did the best in general, the elastic net model that utilized the inclusive recipe had an accuracy of 0.909 as compared to the feature engineered elastic net model with the higher accuracy of 0.911 (see @tbl-accuracy). The elastic net model’s ability to utilize the features of ridge and lasso models by performing feature selection and regularization simultaneously, as well as its ability to capture more complex relationships in the data makes it a strong model for the problem and dataset. 
+Overall, it was fruitful to both build a more complex predictive model and create a feature engineered recipe. The null model had the worst accuracy out of all the models at 0.609, and while the elastic net model did the best in general, the elastic net model that utilized the inclusive recipe had an accuracy of 0.909 as compared to the feature engineered elastic net model with the higher accuracy of 0.911 (see \@tbl-accuracy). The elastic net model’s ability to utilize the features of ridge and lasso models by performing feature selection and regularization simultaneously, as well as its ability to capture more complex relationships in the data makes it a strong model for the problem and dataset. 
 
 ## Conclusion
 
