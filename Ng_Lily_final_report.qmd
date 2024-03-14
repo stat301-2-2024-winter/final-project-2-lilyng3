@@ -36,15 +36,21 @@ library(here)
 load(here("data/students_clean.rda"))
 load(here("results/eda_plots.rda"))
 load(here("results/metrics.rda"))
-
+load(here("results/autoplots.rda"))
+load(here("results/conf_matrix.rda"))
+load(here("results/metrics_final.rda"))
 
 ```
 
 ## Introduction
 
-TEXT HERE!!!!!!!!!!!!!!!!
+Access to higher education can be a big stepping stone to providing one with a more secure future. In fact, a 2011 report by the Georgetown University Center on Education and the Workforce found that on average, people with college degrees earned 84 percent more than people who’s highest level of education was high school (Carnevale et al., 2011). While there is certainly a diversity of values that can self-determine whether someone lives a satisfactory life or not, it is undeniable that the financial security afforded through higher education can have ripple effects to health, stress levels, autonomy, and other factors that can improve the quality of someone’s life. Therefore, the ability to assess what factors could influence the chances of someone dropping out is valuable, so educational communities can better support those students and hopefully mitigate the possibilities of them dropping out.
+
+The objective of this report is to develop the best model to determine if it is possible to predict whether a student graduates or drops out of higher education, considering how impactful higher education is in a student’s future trajectory. Considering higher education can be more difficult to access for students from marginalized backgrounds due to high cost, systemic discrimination, and other factors, it is important that students of diverse backgrounds are represented in the dataset so the model is not working off a monolith of people. This dataset includes students of varying demographic, socioeconomic, macroeconomic, and academic identities to capture that importance. It consists of 4,424 observations, each representing a student. There are 35 variables in the dataset, with 19 numeric variables and 18 categorical variables. They capture information about each student from demographics such as area of study, nationality, and gender to more specific information such as if their tuition has been paid on time, if they have been displaced, and their grades each semester. All students are from Polytechnic Institute of Portalegre, and the dataset covers students who attended the school from school years 2008-2009 to 2018-2019. It should be noted that this dataset defines dropouts from what the call a ‘micro-perspective’, “where field and institution changes are considered dropouts independently of the timing these occur”, as opposed to the ‘macro-perspective’ which only views the students who leave the college system without a degree as dropouts (Realinho et al., 2022). This is important to note because the definition of dropout is unusual compared to what we culturally think of as ‘dropping out of college’.
 
 ## Data Overview
+
+The target variable I am predicting is the educational outcome, whether a student dropped out or graduated. There is no missingness in the whole dataset, including my target variable. In @fig-target, we can see that among all the observations that include the educational outcome of Dropout or Graduate, there is a difference of 788 observations between them, which is a bit of an imbalance, but not enough to transform the data.
 
 ```{r}
 #| label: fig-target
@@ -65,6 +71,8 @@ students |>
 
 ```
 
+Taking a portion of the training data, I conducted exploratory data analysis to provide context to the recipes that would be created later on. It should be noted that the EDA was conducted with 80% of the training data. I created a correlation matrix with the numeric variables to look for possible interaction steps. In @fig-cor, the strongest positive correlations were between variables that looked at students' academic achievement between their first and second semester, whether it was variables representing the number of credits the students were approved for, the number of credits they enrolled for, the number of credits they received, and their grades. Based on further EDA, it seems that if students are academically high achieving in one semester, they are likely to be in the other, with a positive linear correlation (see [Appendix: EDA], @fig-credited and @fig-enrolled). These findings ended up influencing the interactions included in the feature engineering process. The EDA also explored which variables likely had influential relationships to the educational outcome of students, or the target variable. This ended up being factors like the student’s marital status, if they went to school during the day or night, their area of study, pre-existing schooling experience, their gender, and their age at enrollment. What kind of application they had to get into the school also had a strong relationship to educational outcome, for example if students were international or transfer applicants. Additionally, the finances of a student had a relationship with educational outcomes, such as if students were in debt, if they paid their tuition on time, or if they were on scholarship. This EDA informed which variables I chose to provide in my recipe for my feature engineering recipes (can be seen in [Appendix: EDA]).
+
 ```{r}
 #| label: fig-cor
 #| fig-cap: Correlation Plot of Numeric Data
@@ -72,7 +80,50 @@ students |>
 cor_plot
 ```
 
+## Methods
+
+This problem is classification based, with educational outcomes of either dropout or graduated. The data is split on a 80-20 split, with 80 percent of the cleaned data being in the training set and 20 percent in the testing set. It is stratified on the target variable to ensure more even sampling. I used v-fold cross-validation to estimate the performance of the models and to prevent overfitting. This allows for a more robust estimate of model performance compared to a single train-test split. By using v-fold cross-validation, more reliable estimates of performance can be achieved while helping to ensure that the selected model performs well on unseen data. I will fit 12 models in total, with 6 model types being fit twice. The first recipe being used is an inclusive recipe that includes all predictor variables, and the second a feature engineered recipe with its creation being guided by the EDA above. In this report, models fit with the feature engineering recipe will be referred to using ‘FE’. The model types being used are a baseline null model, a logistic regression model, an elastic net model, a k-nearest neighbors model, a random forest model, and a boosted tree model. The elastic net is being tuned on the penalty and mixture, and the k-nearest neighbors is tuned for the number of neighbors. The random forest is tuned for minimum node size and the number of predictors randomly selected at each split. The hyperparameters for minimum node size were already chosen to be a range of 2 to 40. To choose the hyperparameters for the number of variables considered at each split, I picked around 50% of the number of predictors I had after processing the data through the recipe, which was roughly 40. The boosted tree model is tuned for the same factors plus the learn rate. To choose the hyperparameters for learn rate, I picked a narrow range of 0.00001 to 0.63096, to provide narrower options than 0 to 1.
+
+The inclusive, basic recipe was similar for both parametric and non-parametric models. It included all predictor variables, hence it being inclusive. I removed variables that represented a student’s parent’s occupations and their educational levels. This is because there were many values for such a small dataset, with many values only occurring once, which indicated low variance and limited predictive value. Within the context of the smaller size of the dataset, I was also worried it would lead to overfitting. Next, I converted all nominal predictors into dummy variables. This transformation is done to make sure the model can handle categorical data by representing them as binary indicators for each variable. In the parametric (tree based models) recipe, the categorical predictors were converted into one-hot encoded dummy variables. Next, I removed zero variance predictors, this is done in case there are predictors that do not contribute any information to the model as they have the same value across all observations. Removing them helps streamline the model and reduce computation time. Finally, I normalized all predictors, which scales the predictor variables to a similar range. This can help improve the performance of the models and ensures that each predictor contributes proportionally to the model’s predictions. The goal of this recipe is to include as many features as possible, and create a baseline to test the feature engineered recipe against to see if the extra work will lead to a better model.
+
+For the feature engineering recipe, instead of inputting all predictors into the recipe, I hand selected the ones with the strongest perceived relationship with the educational outcome, or target variable. This was influenced by the results of the EDA (see [Appendix: EDA]). All nominal predictor variables were converted to dummy variables, the same as the inclusive recipes. In the non-parametric feature engineered recipe, I added interaction terms between numeric predictors that related to academic achievement from the student’s 1st and 2nd semesters. This was because of the positive correlation between them that was seen in @fig-cor. This step generates interaction terms between pairs of variables to capture potential harmonic effects between them. After adding the interaction terms, the rest of the steps were the same for both the feature engineered parametric and non-parametric recipes. The goal of the feature engineered recipes is to select and transform the input features in a way that will both enhance the predictive performance of the model while minimizing overfitting. It aims to reduce computational complexity and improve model accuracy by only looking at the most informative features.
+
+The metric I will be using to compare and select the final, best model is accuracy. This is because my data is not too imbalanced, so I want to prioritize the straightforward qualities of accuracy as my main metric. Secondarily, I will be looking at the ROC AUC metric as it is useful for providing a comprehensive assessment of the model’s ability to discriminate between the positive and negative classes.
+
 ## Model Building & Selection
+
+Reviewing the hyperparameter tuning values that were used, @fig-en-ap shows the hyperparameters across the elastic net model. We can see that the range of 10 to the power of -8 to 10 to the power of -2 produces the highest accuracy. The exact best values are a penalty of 0.00316 and a mixture of 0.525, indicating that the elastic net model achieved optimal regularization with a balanced combination of lasso and ridge penalties. @fig-rf-ap looks at the hyperparameters for the random forest model, where we can see that a minimum node size of 2 and 10 as the number of predictors randomly selected at each split is optimal. In @fig-bt-ap, we can see that the same best hyperparameters apply, with the addition of the best learn rate being 0.631. Finally, in @fig-knn-ap, we can see that the best number of nearest neighbors is 8. While I do not think further tuning is necessary to explore in the context of the already high accuracy rates, considering this knowledge, I would adjust the tuning for randomly selected predictors to be 10 to 40, and the learn rate to be closer to 1 for more optimal tuning in the future.
+
+```{r}
+#| label: fig-en-ap
+#| fig-cap: Performance of Boosted Tree Model Across Hyperparameters
+
+en_autoplot
+```
+
+```{r}
+#| label: fig-rf-ap
+#| fig-cap: Performance of Random Forest Model Across Hyperparameters
+
+rf_autoplot
+```
+
+```{r}
+#| label: fig-bt-ap
+#| fig-cap: Performance of Boosted Tree Model Across Hyperparameters
+
+bt_autoplot
+```
+
+```{r}
+#| label: fig-knn-ap
+#| fig-cap: Performance of K-Nearest Neighbors Model Across Hyperparameters
+
+knn_autoplot
+```
+
+Accuracy will be used as the metric to compare models and determine which one is the most successful. @tbl-accuracy contains the best performances from each model, with the best performance at the top. From this, we can see that the elastic net model that utilized the feature engineering recipe performed the best, with an extremely high accuracy of 0.91. Considering that a perfect accuracy would be 1.0, or 100%, 0.91 is a very high accuracy rate. This model also has the highest ROC AUC value at 0.95, with 1.0 being perfect. I was surprised that the elastic net model did the best, considering I was assuming one of the tree based models would perform better due to experience of classification models performing better with tree based models. However, the elastic net model has regularization which allows it to use both lasso and ridge penalties, shrinking less important coefficients towards zero (similar to lasso) while diminishing multicollinearity and stabilizing the coefficient estimates (similar to ridge). This is helpful, as the elastic net model is able to select the most relevant features, while avoiding overfitting.
+
 ```{r}
 #| label: tbl-accuracy
 #| tbl-cap: Best Accuracy of All Models
@@ -81,15 +132,49 @@ result_table_accuracy |>
   knitr::kable() 
 ```
 
-```{r}
-#| label: tbl-rocauc
-#| tbl-cap: Best ROC AUC of All Models
+## Final Model Analysis
 
-result_table_roc_auc |> 
-  knitr::kable()
+The final model, which is the elastic net model that uses the feature engineering recipe, had an accuracy of 0.935 on the testing data, which is higher than what the training data was at 0.911. Analyzing another metric, the ROC AUC value, produces another strong result at 0.967. As the ROC AUC value is very close to 1, this suggests that the model has very high discriminatory power. This also indicates strong performance in terms of true positive and true negative rates. We can see in @fig-roc curve that the ROC AUC curve is very close to the perfect classifier point.
+
+```{r}
+#| label: fig-roc
+#| fig-cap: ROC AUC Curve for Final Model Results
+
+roc_plot
 ```
 
-## Appendix: EDA 
+In @fig-conf-matrix, we can see the exact breakdown of the positive and negative instances. We can see that most of the observations were predicted correctly, with 95.04% of dropout predictions being correct and 92.41% of graduate predictions being correct. Considering the predictive goal of educational outcomes of students in the dataset, the existence of the false positives and false negatives is not too concerning.
+
+```{r}
+#| label: fig-conf-matrix
+#| fig-cap: Confusion Matrix For Final Model Results
+
+conf_matrix_plot
+```
+
+Overall, it was fruitful to both build a more complex predictive model and create a feature engineered recipe. The null model had the worst accuracy out of all the models at 0.609, and while the elastic net model did the best in general, the elastic net model that utilized the inclusive recipe had an accuracy of 0.909 as compared to the feature engineered elastic net model with the higher accuracy of 0.911 (see @tbl-accuracy). The elastic net model’s ability to utilize the features of ridge and lasso models by performing feature selection and regularization simultaneously, as well as its ability to capture more complex relationships in the data makes it a strong model for the problem and dataset.
+
+## Conclusion
+
+In conclusion, the predictive model proved that it is possible to accurately predict the educational outcome of students when provided with robust enough demographic data. The dataset included a range of factors, like identity based metrics such as gender, financial backgrounds, and performance as a student. Considering that educational institutions collect a lot of data about their students, replicating the variables included in this dataset for other schools is highly likely. With the knowledge that it is possible to predict who is able to graduate from higher education versus dropout, I would like to do further investigation into what variables had the highest influence over the predictive model. This would provide insight as to where remedial support could be developed, in order to retain as many students as possible. For example, if financial need is a large factor in a student’s ability to stay in school, then that would mean schools should focus more on monetarily providing for their students to try and reduce dropout rates. The experience of completing higher education can help students pursue their passions, discover new knowledge, and develop as people in general. The more students who want to access higher education and are able to finish degrees will ultimately equal more people who are able to diversify and advance society, making the world a better place for us all.
+
+## References
+
+Carnevale, A. P., Smith, N., & Strohl, J. (2011). *The College Payoff: Education, Occupations, Lifetime Earnings*. Washington, DC: Georgetown University Center on Education and the Workforce.\
+
+Martins, M. V., Tolledo, D., Machado, J., Baptista, L. M. T., & Realinho, V. (2021). *Early Prediction of student’s Performance in Higher Education: A Case Study.* In Á. Rocha, H. Adeli, G. Dzemyda, F. Moreira, & A. M. Ramalho Correia (Eds.), Trends and Applications in Information Systems and Technologies (Vol. 1365, pp. 166–175). Springer International Publishing. https://doi.org/10.1007/978-3-030-72657-7_16
+
+\
+Valentim Realinho, M. V. M. (2021). *Predict students’ dropout and academic success* \[dataset\]. UCI Machine Learning Repository. https://doi.org/10.24432/C5MC89
+
+## Appendix: Technical Information
+
+It should be noted that there were originally three categories in the dataset, representing statuses of dropped out, currently enrolled, or graduated. I decided to simplify the predictive process to focus on students that either dropped out or graduated, emitting the currently enrolled status. This is because being currently enrolled means one still has the possibility to drop out or graduate, so ultimately, if I had more time, I would use the predictive model on those students to decide if they will graduate or not.
+
+## Appendix: EDA
+
+@fig-credited and @fig-enrolled extends the strongest positively correlated variables from @fig-cor. In both plots, we can see that the relationship between the two variables has a positive linear relationship, in that a student that does well academically 1st semester does well academically 2nd semester as well.
+
 ```{r}
 #| label: fig-credited
 #| fig-cap: Units Credited 1st & 2nd Semester
@@ -103,6 +188,18 @@ interact_credited_plot
 
 interact_enrolled_plot
 ```
+
+While accuracy was my selected metric to evaluate all my models, I also have included the results for the ROC AUC for all the best models in @tbl-rocauc. Interestingly, the elastic net model with the feature engineering recipe performed the best, similarly to the accuracy metric.
+
+```{r}
+#| label: tbl-rocauc
+#| tbl-cap: Best ROC AUC of All Models
+
+result_table_roc_auc |> 
+  knitr::kable()
+```
+
+Included here is the EDA for the variables that I selected for my feature engineering recipes. All of these had what I deemed to be significant enough relationships to the educational outcome of a student, enough so that I determined them to be useful to be the input for the recipe.
 
 ```{r}
 #| label: fig-age
