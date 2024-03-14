@@ -1,0 +1,93 @@
+---
+title: "Executive Summary\n\nNavigating Educational Trajectories: Predictive Modeling of Student Educational Outcomes"
+subtitle: |
+  | Final Project 
+  | Data Science 2 with R (STAT 301-2)
+author: "Lily Ng"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    
+execute:
+  echo: false
+  warning: false
+
+from: markdown+emoji 
+reference-location: margin
+citation-location: margin
+---
+
+::: {.callout-tip icon="false"}
+## Github Repo Link
+
+[Final Project 2 GitHub Repo](https://github.com/stat301-2-2024-winter/final-project-2-lilyng3.git)
+:::
+
+```{r}
+# load packages
+library(tidyverse)
+library(tidymodels)
+library(here)
+
+# load data
+load(here("results/target_eda.rda"))
+load(here("results/metrics.rda"))
+load(here("results/conf_matrix.rda"))
+
+```
+
+## Introduction
+
+The objective of this report is to develop the best model to predict whether a student graduates or drops out of higher education, considering how impactful higher education is in a student’s future trajectory. Considering higher education can be more difficult to access for students from marginalized backgrounds due to high cost, systemic discrimination, and other factors, it is important that students of diverse backgrounds are represented in the dataset so the model is not working off a monolith of people. This dataset includes students of varying demographic, socioeconomic, macroeconomic, and academic identities to capture that importance. It consists of 4,424 observations, each representing a student. There are 35 variables in the dataset, with 19 numeric variables and 18 categorical variables. They capture information about each student from demographics such as area of study, nationality, and gender to more specific information such as if their tuition has been paid on time, if they have been displaced, and their grades each semester. All students are from Polytechnic Institute of Portalegre, and the dataset covers students who attended the school from school years 2008-2009 to 2018-2019. 
+
+## Data Overview and Methods
+
+The target variable I am predicting is the educational outcome, whether a student dropped out or graduated. There is no missingness in the whole dataset, including my target variable. In @fig-target, we can see that among all the observations that include the educational outcome of Dropout or Graduate, there is a difference of 788 observations between them, which is a bit of an imbalance, but not enough to transform the data. 
+
+```{r}
+#| label: fig-target
+#| fig-cap: Distribution of Educational Outcome
+
+target_dist
+```
+
+This problem is classification based. The data is split on a 80-20 split, with 80 percent of the cleaned data being in the training set and 20 percent in the testing set. I used v-fold cross-validation with 5 folds and 10 repeats to estimate the performance of the models and to prevent overfitting. I will fit 12 models in total, with 6 model types being fit twice. The first recipe being used is an inclusive recipe that includes all predictor variables, and the second a feature engineered recipe with its creation being guided by the EDA. The metric I will be using to compare and select the final, best model is accuracy. This is because my data is not too imbalanced, so I want to prioritize the straightforward qualities of accuracy as my main metric.
+
+## Finding the Best Model
+
+Accuracy will be used as the metric to compare models and determine which one is the most successful. @tbl-accuracy contains the best performances from each model, with the best performance at the top. From this, we can see that the elastic net model that utilized the feature engineering recipe performed the best, with an extremely high accuracy of 0.91. 
+
+```{r}
+#| label: tbl-accuracy
+#| tbl-cap: Best Accuracy of All Models
+
+result_table_accuracy |> 
+  knitr::kable() 
+```
+
+After fitting the best model on the resting data, the final model had an accuracy of 0.935 on the testing data, which is higher than what the training data was at 0.911. Analyzing another metric, the ROC AUC value, produces another strong result at 0.967. As the ROC AUC value is very close to 1, this suggests that the model has very high discriminatory power. This also indicates strong performance in terms of true positive and true negative rates.
+
+In @fig-conf-matrix, we can see the exact breakdown of the positive and negative instances. We can see that most of the observations were predicted correctly, with 95.04% of dropout predictions being correct and 92.41% of graduate predictions being correct. Considering the predictive goal of educational outcomes of students in the dataset, the existence of the false positives and false negatives is not too concerning. 
+
+```{r}
+#| label: fig-conf-matrix
+#| fig-cap: Confusion Matrix For Final Model Results
+
+conf_matrix_plot
+```
+
+Overall, it was fruitful to both build a more complex predictive model and create a feature engineered recipe. The null model had the worst accuracy out of all the models at 0.609, and while the elastic net model did the best in general, the elastic net model that utilized the inclusive recipe had an accuracy of 0.909 as compared to the feature engineered elastic net model with the higher accuracy of 0.911 (see @tbl-accuracy). The elastic net model’s ability to utilize the features of ridge and lasso models by performing feature selection and regularization simultaneously, as well as its ability to capture more complex relationships in the data makes it a strong model for the problem and dataset. 
+
+## Conclusion
+
+In conclusion, the predictive model proved that it is possible to accurately predict the educational outcome of students when provided with robust enough demographic data. Knowing that predicting educational outcomes is possible is useful, considering that the experience of completing higher education can help students pursue their passions, discover new knowledge, and develop as people in general. The more students who want to access higher education and are able to finish degrees will ultimately equal more people who are able to diversify and advance society, making the world a better place for us all.
+
+## References
+
+Martins, M. V., Tolledo, D., Machado, J., Baptista, L. M. T., & Realinho, V. (2021). *Early Prediction of student’s Performance in Higher Education: A Case Study.* In Á. Rocha, H. Adeli, G. Dzemyda, F. Moreira, & A. M. Ramalho Correia (Eds.), Trends and Applications in Information Systems and Technologies (Vol. 1365, pp. 166–175). Springer International Publishing. https://doi.org/10.1007/978-3-030-72657-7_16
+
+\
+Valentim Realinho, M. V. M. (2021). *Predict students’ dropout and academic success* \[dataset\]. UCI Machine Learning Repository. https://doi.org/10.24432/C5MC89\

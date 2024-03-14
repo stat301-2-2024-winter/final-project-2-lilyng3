@@ -94,7 +94,7 @@ students <- students_raw |>
 save(students, file = here("data/students_clean.rda"))
 
 # explore target variable --------------------------------------------------------------
-students |> 
+target_dist <- students |> 
   ggplot(aes(x = target, fill = target)) +
   geom_bar() +
   scale_fill_brewer(palette = "Paired") +  
@@ -106,6 +106,8 @@ students |>
     y = "Count (# of Students)",
     fill = "Educational Outcome"
   )
+
+save(target_dist, file = here("results/target_eda.rda"))
 
 # split data and create folds --------------------------------------------------------------
 students_split <- students |>
